@@ -1,0 +1,19 @@
+﻿<Properties StartupItem="Console/WebConsole.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x64" PreferredExecutionTarget="/usr/bin/google-chrome-stable" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Console/Views/Default/BuilderLog.cshtml">
+    <Files>
+      <File FileName="Console/Controllers/NewDefaultController.cs" Line="1" Column="1" />
+      <File FileName="Console/Views/Default/Index.cshtml" Line="1" Column="1" />
+      <File FileName="Console/App_Start/BundleConfig.cs" Line="1" Column="1" />
+      <File FileName="Console/Views/Default/BuilderLog.cshtml" Line="1" Column="1" />
+      <File FileName="Console/Views/Shared/LiteLayout.cshtml" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/home/test1/Repos/WebConsole/Console/Controllers/NewDefaultController.cs" line="29" column="1" />
+      <Breakpoint file="/home/test1/Repos/WebConsole/Console/Controllers/NewDefaultController.cs" line="27" column="67" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
