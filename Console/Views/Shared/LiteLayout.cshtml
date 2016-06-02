@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>@ViewBag.Title</title>
+	<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class="page">
+		<header>
+			<div id="title">
+				<h1>Server status monitor</h1>
+			</div>
+			<div id="logindisplay">
+				<br />
+			</div>
+			<nav>
+				<ul id="menu">
+					<li>@Html.ActionLink("Server status", "Index", "Default")</li>
+					<li>@Html.ActionLink("Builder Log", "BuilderLog", "Default")</li>
+				</ul>
+			</nav>
+		</header>
+		<section id="main">
+			@RenderBody()
+		</section>
+		<footer>
+		</footer>
+	</div>
+</body>
+</html>

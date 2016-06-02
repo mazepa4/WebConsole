@@ -1,0 +1,182 @@
+﻿@model WebConsole.Models.BuildResult
+
+<script>
+	function ToLocalDate(utcMillis)
+	{
+		var outDate = new Date(utcMillis);
+
+		var month_names = new Array();
+		month_names[month_names.length] = "Jan";
+		month_names[month_names.length] = "Feb";
+		month_names[month_names.length] = "Mar";
+		month_names[month_names.length] = "Apr";
+		month_names[month_names.length] = "May";
+		month_names[month_names.length] = "Jun";
+		month_names[month_names.length] = "Jul";
+		month_names[month_names.length] = "Aug";
+		month_names[month_names.length] = "Sep";
+		month_names[month_names.length] = "Oct";
+		month_names[month_names.length] = "Nov";
+		month_names[month_names.length] = "Dec";
+
+		var day_names = new Array();
+		day_names[day_names.length] = "Sun";
+		day_names[day_names.length] = "Mon";
+		day_names[day_names.length] = "Tue";
+		day_names[day_names.length] = "Wed";
+		day_names[day_names.length] = "Thu";
+		day_names[day_names.length] = "Fri";
+		day_names[day_names.length] = "Sat";
+
+		var dayOfMonth = outDate.getDate().toString();
+		if (dayOfMonth.length < 2)
+			dayOfMonth = "0".concat(dayOfMonth);
+
+		var hours = outDate.getHours().toString();
+		if (hours.length < 2)
+			hours = "0".concat(hours);
+
+		var minutes = outDate.getMinutes().toString();
+		if (minutes.length < 2)
+			minutes = "0".concat(minutes);
+
+		document.write(day_names[outDate.getDay()] + " " + dayOfMonth + "-" + month_names[outDate.getMonth()] + "-" + outDate.getFullYear() + " " +
+			hours + ":" + minutes);
+	}
+
+	function process_expand_collapse(id){
+		id=id.replace("'","")
+		id=id.replace("'","")
+		currentTarget=document.getElementById(id);
+        var images=currentTarget.parentNode.getElementsByTagName("img");
+        if(images.length!=0){
+        	if(images[0].classList.contains("collapsed")){
+            	var nodes_to_expand=currentTarget.parentNode.getElementsByTagName("ul");
+            	images[0].classList.remove("collapsed");
+            	images[0].classList.add("expanded");
+            	for(var key in nodes_to_expand)   {
+                	var node=nodes_to_expand[key];
+                    if(typeof(node)=="object")
+                    	node.style.display="none";
+                    }
+                }
+                else{
+                    var nodes_to_collapse=currentTarget.parentNode.getElementsByTagName("ul");
+                    images[0].classList.remove("expanded");
+                    images[0].classList.add("collapsed");
+                    for(var key in nodes_to_collapse)   {
+                        var node=nodes_to_collapse[key];
+                        if(typeof(node)=="object")
+                            node.style.display="block";
+            	}
+        	}
+     	}
+     }
+
+</script>
+
+@{
+	ViewBag.Title = "Builder Log";
+}
+
+<h2>@ViewBag.Message</h2>
+
+
+<div style="display:inline;">
+	<!---<form action="/RunAutoBuilder" method="get" style="display:inline;">
+		<input type="submit" name="RunAutoBuilder" value="Run AutoBuilder" disabled />
+	</form>-->
+	<span style="font-size: 13pt;">Status: <span id="builderStatus" style="font-size: 13pt;color:#1d60ff;">Unknown</span> </span>
+	<span style="font-size: 13pt;">Rebuild in: <span id="buildTime" style="font-size: 13pt;color:#1d60ff;">Unknown</span> </span>
+	<span style="font-size: 13pt;">Last rebuild was started in: <span id="lastBuildTime" style="font-size: 13pt;color:#1d60ff;">Unknown</span> </span>
+</div>
+<script>
+
+	function updateTime() {
+		//var from=performance.now();
+		var xmlhttp=new XMLHttpRequest();
+		xmlhttp.open("GET", '/NewDefault/GetTime');
+		xmlhttp.onreadystatechange = function() {
+	    	if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+			        if(xmlhttp.status == 200){
+			        var re = /\s*;\s*/;
+				    var response=xmlhttp.responseText.split(re);
+				    document.getElementById("buildTime").innerText= response[0];
+					document.getElementById("lastBuildTime").innerText= response[1];
+					//console.log("GetTime:"+(performance.now()-from));
+		        }else{
+		            console.log('Error: ' + xmlhttp.statusText )
+		        }
+	    	}
+		}
+		xmlhttp.send();
+	}
+
+	function checkAutobuildStatus() {
+		//var from=performance.now();
+		var xmlhttp=new XMLHttpRequest();
+		xmlhttp.open("GET", '/NewDefault/CheckAutobuildStatus');
+		xmlhttp.onreadystatechange = function() {
+	    	if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+		        if(xmlhttp.status == 200){
+		        	if(document.getElementById("builderStatus").innerText != xmlhttp.responseText && document.getElementById("builderStatus").innerText!="Unknown")
+		        		document.location.reload();
+			        document.getElementById("builderStatus").innerText= xmlhttp.responseText;
+			        //console.log("CheckAutobuildStatus:"+(performance.now()-from));
+		        }else{
+		            console.log('Error: ' + xmlhttp.statusText )
+		        }
+	    	}
+		}
+		xmlhttp.send();
+	}
+
+	checkAutobuildStatus();
+	setInterval(updateTime, 1000);
+	setInterval(checkAutobuildStatus, 5000);
+</script>
+
+@if (Model != null)
+{
+	if (Model.status != null && Model.status != "OK")
+	{
+		@Html.Raw(Model.status);
+	}
+	else
+	{
+	 	<ul class="expand-list" style="width: 100%;">
+				
+			@foreach (var item in Model.reposLogs)
+			{
+				<li style="margin-left: 20px;margin-top: 5px;">
+					<img  id="@Html.Raw(item.title)" class="expand-list collapsed" style="margin-top: 5px;" onclick="process_expand_collapse(&quot'@Html.Raw(item.title)'&quot);">
+					<span id="@Html.Raw(item.title)" class="_title expand-list" ondblclick="process_expand_collapse(&quot'@Html.Raw(item.title)'&quot);">
+						<img class="title_item expand-list">
+						<a style="margin-left: 5px;">@Html.Raw(item.title)</a>
+
+					</span>
+					<script>
+						
+					</script>
+					<ul class="expand-list item" style="display: block;">
+					<hr style="margin:0; padding:0 2px 0 2px;">
+					@foreach (var log in item.logs)
+					{
+						<li class="log_item">
+							<span class="log_item expand-list">
+								<img class="log_item_icon expand-list">
+								<a style="margin-left: 5px;">@log</a>
+							</span></li><li class="log_item">
+						</li>
+						<hr style="margin:0; padding:0 2px 0 2px;">
+					}
+					</ul>
+				</li>
+
+
+			}
+
+		</ul>
+
+	}
+}

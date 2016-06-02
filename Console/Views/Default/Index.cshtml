@@ -1,0 +1,72 @@
+﻿@{
+	ViewBag.Title = "Server status";
+}
+
+<h2>@ViewBag.Message</h2>
+
+<table width="100%">
+	<tr>
+		<th width="200px" class="header">Service</th>
+		<th class="header">Status</th>
+		<th width="270px" class="header">Control</th>
+	</tr>
+
+	@foreach (var service in ViewBag.services)
+	{
+		var cssClass = service.running ? "success" : "fail";
+		string controlCommand ="Restart";
+
+		<tr>
+			<th class="@cssClass">@service.name</th>
+			<th class="@cssClass">@service.status</th>
+			<th class="@cssClass">
+				
+				<input type="button" class="myButton" name="Start" value="Start" onclick="
+					var requestUrl = '/NewDefault/ControlService?serviceName=' + '@service.name&action=start';
+					var xhttp = new XMLHttpRequest();
+					xhttp.open('POST', requestUrl, true);
+					xhttp.setRequestHeader('Content-Type', 'text/plain');
+					xhttp.onreadystatechange = function() {
+				    	if (xhttp.readyState == 4 && xhttp.status == 200) {
+				    		if(xhttp.responseText=='Operation Successfull')
+				   				location.reload();
+				   			else 
+				   				console.log('Failed to perform operation: '+xhttp.responseText);
+				    	}
+				  	};				
+				  	xhttp.send();
+				">				
+				<input type="button" class="myButton" name="Restart" value="Restart" onclick="
+					var requestUrl = '/NewDefault/ControlService?serviceName=' + '@service.name&action=restart';
+					var xhttp = new XMLHttpRequest();
+					xhttp.open('POST', requestUrl, true);
+					xhttp.setRequestHeader('Content-Type', 'text/plain');
+					xhttp.onreadystatechange = function() {
+				    	if (xhttp.readyState == 4 && xhttp.status == 200) {
+				    		if(xhttp.responseText=='Operation Successfull')
+				   				location.reload();
+				   			else 
+				   				console.log('Failed to perform operation: '+xhttp.responseText);
+				    	}
+				  	};				
+				  	xhttp.send();
+				">				
+				<input type="button" class="myButton" name="Stop" value="Stop" onclick="
+					var requestUrl = '/NewDefault/ControlService?serviceName=' + '@service.name&action=stop';
+					var xhttp = new XMLHttpRequest();
+					xhttp.open('POST', requestUrl, true);
+					xhttp.setRequestHeader('Content-Type', 'text/plain');
+					xhttp.onreadystatechange = function() {
+				    	if (xhttp.readyState == 4 && xhttp.status == 200) {
+				    		if(xhttp.responseText=='Operation Successfull')
+				   				location.reload();
+				   			else 
+				   				console.log('Failed to perform operation: '+xhttp.responseText);
+				    	}
+				  	};				
+				  	xhttp.send();
+				">				
+			</th>
+		</tr>
+	}
+</table>
